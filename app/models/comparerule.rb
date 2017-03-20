@@ -1,0 +1,2 @@
+class Comparerule < ApplicationRecord
+end

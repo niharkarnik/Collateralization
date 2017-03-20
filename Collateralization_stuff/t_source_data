@@ -1,0 +1,11 @@
+CREATE TABLE `source_data` (
+  `id` int(11) NOT NULL,
+  `Field1` varchar(45) DEFAULT NULL,
+  `Field2` varchar(45) DEFAULT NULL,
+  `Field3` varchar(45) DEFAULT NULL,
+  `Field4` varchar(45) DEFAULT NULL,
+  `Field5` varchar(45) DEFAULT NULL,
+  `Quantity` int(11) DEFAULT NULL,
+  `Amount` decimal(15,3) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

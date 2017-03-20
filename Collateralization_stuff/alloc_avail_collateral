@@ -1,0 +1,96 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `alloc_avail_collateral`(
+		in v_s_field1 				varchar(255),
+		in v_s_field2 				varchar(255),
+		in v_s_field3 				varchar(255),
+        in v_margin_type 		varchar(1),
+        in v_source_id 			int,
+		in v_source_quantity 	int,
+        in v_source_amount 		decimal(15,3)	)
+BEGIN
+DECLARE v_c_id 		int DEFAULT 0;
+declare v_c_field1 	varchar(255) default ' ';
+declare v_c_field2 	varchar(255) default ' ';
+declare v_c_field3 	varchar(255) default ' ';
+
+declare v_collateral_quantity  			int default 0;
+declare v_collateral_amount				decimal(15,3) default 0;
+declare v_collateral_alloc_quantity 	int default 0;
+declare t_margin_type 					varchar(1) default ' ';
+declare c_margin_type 					varchar(1) default ' ';
+
+declare v_collateral_needed 			INT default v_source_quantity;
+declare v_collateral_alloc_total 		INT default 0;
+
+	declare collateral_cursor cursor for
+		select id, field1, field2, field3, margin_type,
+         case when (quantity - coalesce(alloc_marg.collateral_alloc_qty,0))  <= 0 then 0
+              else (quantity - coalesce(alloc_marg.collateral_alloc_qty,0))
+		 end  collateral_quantity
+         , amount as collateral_amount
+
+		from col.collateral_data col_data
+        left outer join    col.allocated_margin alloc_marg
+             on col_data.id = alloc_marg.collateral_id
+            and (quantity - coalesce(collateral_alloc_qty,0)) > 0
+
+		where field1 = v_s_field1
+          and field2 = v_s_field2
+          and field3 = v_s_field3
+          and margin_type = t_margin_type
+          order by field1, field2, field3, collateral_quantity, amount;
+
+    set v_collateral_needed = v_source_quantity;
+    set t_margin_type       = v_margin_type;
+
+	open collateral_cursor;
+
+      coll_loop: Loop
+
+ 		if v_collateral_alloc_total < v_source_quantity then
+
+			fetch collateral_cursor
+			into v_c_id, v_c_field1, v_c_field2, v_c_field3, c_margin_type,
+				v_collateral_quantity, v_collateral_amount ;
+
+
+/* total needed to allocate ==>  v_source_quantity
+    total allocated so far ==>   v_collateral_alloc_total
+    current collateral ==>       v_collateral_quantity
+    current collateral alloc ==> v_collateral_alloc_quantity
+    */
+
+			if v_collateral_quantity <= v_collateral_needed then
+				set v_collateral_alloc_quantity = v_collateral_quantity;
+			else
+				set v_collateral_alloc_quantity = v_collateral_needed;
+			end if;
+
+			set v_collateral_needed      = v_collateral_needed      - v_collateral_alloc_quantity;
+			set v_collateral_alloc_total = v_collateral_alloc_total + v_collateral_alloc_quantity;
+
+        select 	v_source_id, v_source_quantity, v_collateral_needed,
+				v_s_field1, v_s_field2, v_s_field3, v_margin_type, v_collateral_alloc_quantity,
+                v_c_id, v_c_field1, v_c_field2, v_c_field3, t_margin_type,
+				v_collateral_quantity, v_collateral_amount ;
+
+			insert into allocated_margin
+				(
+					`allocation_date`,	`allocation_run_seq`,
+					`source_id`,		`source_alloc_qty`,
+					`collateral_id`,	`collateral_alloc_qty`,
+					`s_insrt_tms`)
+				values
+					(
+					curdate(),			curdate(),
+					v_source_id,		v_source_quantity,
+					v_c_id,				v_collateral_alloc_quantity,
+					curdate()
+					);
+			if v_collateral_alloc_total >= v_source_quantity  then
+				leave coll_loop;
+			end if;
+        end if;
+      end loop;
+
+      close collateral_cursor;
+END

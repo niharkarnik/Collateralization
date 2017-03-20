@@ -1,0 +1,80 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allocation`(in alloc_type varchar(1))
+BEGIN
+
+DECLARE error_msg    varchar(255) DEFAULT ' ';
+DECLARE margin_type varchar(1) DEFAULT "I";
+
+DECLARE v_field1 varchar(255) DEFAULT " ";
+DECLARE v_field2 varchar(255) DEFAULT " ";
+DECLARE v_field3 varchar(255) DEFAULT " ";
+
+DECLARE v_total_source_quantity int DEFAULT 0;
+DECLARE v_total_source_amount decimal(15,3) DEFAULT 0;
+DECLARE v_total_collateral_quantity int DEFAULT 0;
+DECLARE v_total_collateral_amount decimal(15,3) DEFAULT 0;
+
+
+/*	if (alloc_type is NULL ) then
+		set @v_alloc_type = 'I';
+	else
+		set @v_alloc_type = @alloc_type;
+	end if;
+*/
+
+    declare alloc_cursor cursor for
+    select field1, field2, field3, sum(source_qty), sum(source_amount),
+	 sum(collateral_qty), sum(collateral_amount)
+		from
+		(
+		select 'source', field1, field2, field3,
+			sum(quantity) as source_qty, sum(amount) as source_amount,
+		0 as collateral_qty, 0 as collateral_amount from
+        col.source_data
+		group by field1, field2, field3
+
+		union
+		select 'collateral', field1, field2, field3, 0 as source_qty, 0 as source_amount,
+		sum(quantity) as collateral_qty, sum(amount) as collateral_amount
+        from col.collateral_data
+		where margin_type = margin_type
+		group by field1, field2, field3
+		) base_data
+		group by field1, field2, field3;
+
+
+/*DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+        DECLARE s INT;
+        set @s = @SQLCODE;
+		SELECT 'error caught', @SQLSTATE , @s /*| @error_msg | ' ' | @SQLCODE; ROLLBACK;
+        ;
+	END;
+*/
+	set margin_type = 'I';
+
+	set @error_msg = 'open alloc_cursor';
+	open alloc_cursor;
+
+
+	make_allocations: Loop
+
+		set @error_msg = 'Fetch alloc_cursor';
+--        select @error_msg;
+
+		fetch alloc_cursor
+			into v_field1, v_field2, v_field3,
+			v_total_source_quantity, v_total_source_amount,
+			v_total_collateral_quantity, v_total_collateral_amount ;
+
+		call `get_source_rows`(
+				v_field1,			v_field2,
+				v_field3,
+                margin_type,
+				v_total_source_quantity,	v_total_source_amount );
+
+	end Loop;
+
+	set @error_msg = 'close alloc_cursor';
+    close alloc_cursor;
+
+END

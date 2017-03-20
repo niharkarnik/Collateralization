@@ -1,0 +1,15 @@
+select * from col.allocated_margin;
+select * from col.collateral_data;
+
+delete from col.allocated_margin where id_allocated_margin <> 1;
+
+
+call `alloc_avail_collateral`('A', 'B','C','I',
+        1, 4,20)
+
+rails server -e test
+rails server     <= default is development =>
+
+a
+<%= stylesheet_link_tag    'default', media: 'all', 'data-turbolinks-track': 'reload' %>
+<%= javascript_include_tag 'default', 'data-turbolinks-track': 'reload' %>

@@ -1,0 +1,32 @@
+<h1>Listing all Under Allocated Sources</h1>
+
+<table>
+  <tr>
+    <th>Id</th>
+    <th>field1</th>
+    <th>field2</th>
+    <th>field3</th>
+    <th>field4</th>
+    <th>field5</th>
+    <th>quantity</th>
+    <th>amount</th>
+    <th>sourceallocquantity</th>
+    <th>comparecolumns</th>
+  </tr>
+
+  <% @vunderallocatedsources.each do |vunderallocatedsource| %>
+    <tr>
+      <td><%= vunderallocatedsource.id %></td>
+      <td><%= vunderallocatedsource.Field1 %></td>
+      <td><%= vunderallocatedsource.Field2 %></td>
+      <td><%= vunderallocatedsource.Field3 %></td>
+      <td><%= vunderallocatedsource.Field4 %></td>
+      <td><%= vunderallocatedsource.Field5 %></td>
+      <td><%= vunderallocatedsource.Quantity %></td>
+      <td><%= vunderallocatedsource.Amount %></td>
+      <td><%= vunderallocatedsource.sourceallocquantity %></td>
+      <td><%= vunderallocatedsource.comparefield %></td>
+    </tr>
+  <% end %>
+
+</table>

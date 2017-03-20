@@ -1,0 +1,16 @@
+<h1>Compare Rules</h1>
+
+<table>
+  <tr>
+    <th>field1</th>
+    <th>rule</th>
+  </tr>
+
+  <% @comparerules.each do |comparerule| %>
+    <tr>
+      <td><%= comparerule.field1 %></td>
+      <td><%= comparerule.rule %></td>
+    </tr>
+  <% end %>
+
+</table>

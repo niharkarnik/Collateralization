@@ -1,0 +1,38 @@
+<h1>Listing all Collaterals</h1>
+
+<%= link_to 'New Collateral', new_collateral_path %>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Field1</th>
+    <th>Field2</th>
+    <th>Field3</th>
+    <th>Field4</th>
+    <th>Field5</th>
+    <th>MarginType</th>
+    <th>Quantity</th>
+    <th>Amount</th>
+    <th>compareColumns</th>
+  </tr>
+
+  <% @collaterals.each do |collateral| %>
+    <tr>
+      <td><%= collateral.id %></td>
+      <td><%= collateral.field1 %></td>
+      <td><%= collateral.field2 %></td>
+      <td><%= collateral.field3 %></td>
+      <td><%= collateral.field4 %></td>
+      <td><%= collateral.field5 %></td>
+      <td><%= collateral.margintype %></td>
+      <td><%= collateral.quantity %></td>
+      <td><%= collateral.amount %></td>
+      <td><%= collateral.comparefield %></td>
+
+      <td><%= link_to 'Show', collateral_path(collateral) %></td>
+      <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
+      <td><%= link_to 'Destroy',collateral_path(collateral),
+              method: :delete,
+              data: { confirm: 'Are you sure?'} %> </td>
+    </tr>
+  <% end %>
+</table>

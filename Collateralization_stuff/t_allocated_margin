@@ -1,0 +1,11 @@
+CREATE TABLE `allocated_margin` (
+  `id_allocated_margin` int(11) NOT NULL AUTO_INCREMENT,
+  `allocation_date` date NOT NULL,
+  `allocation_run_seq` int(11) NOT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `source_alloc_qty` int(11) DEFAULT NULL,
+  `collateral_id` int(11) DEFAULT NULL,
+  `collateral_alloc_qty` int(11) DEFAULT NULL,
+  `s_insrt_tms` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_allocated_margin`,`allocation_date`,`allocation_run_seq`)
+) ENGINE=InnoDB AUTO_INCREMENT=20170373 DEFAULT CHARSET=utf8;

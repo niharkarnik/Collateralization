@@ -1,0 +1,63 @@
+<h1> New Collateral entry form</h1>
+
+<%= form_for :collateral, url: collaterals_path do |f| %>
+  <% if @collateral.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@collateral.errors.count, "error") %> prohibited
+        this collateral from being saved:
+      </h2>
+      <ul>
+        <% @collateral.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<p>
+    <%= f.label :id %><br>
+    <%= f.text_field :id %>
+  </p>
+ 
+  <p>
+    <%= f.label :field1 %><br>
+    <%= f.text_area :field1 %>
+  </p>
+  <p>
+    <%= f.label :field2 %><br>
+    <%= f.text_area :field2 %>
+  </p>
+  <p>
+    <%= f.label :field3 %><br>
+    <%= f.text_area :field3 %>
+  </p>
+  <p>
+    <%= f.label :field4 %><br>
+    <%= f.text_area :field4 %>
+  </p>
+  <p>
+    <%= f.label :field5 %><br>
+    <%= f.text_area :field5 %>
+  </p>
+  <p>
+    <%= f.label :margintype %><br>
+    <%= f.text_area :margintype %>
+  </p>
+
+  <p>
+    <%= f.label :quantity %><br>
+    <%= f.text_area :quantity %>
+  </p>
+
+  <p>
+    <%= f.label :amount %><br>
+    <%= f.text_area :amount %>
+  </p>
+  
+  <p>
+    <%= f.submit %>
+  </p>
+
+<% end %>
+<%= link_to 'Back', collaterals_path %>

@@ -1,0 +1,49 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_source_rows`(
+		in field1 varchar(255),
+		in field2 varchar(255),
+		in field3 varchar(255),
+        in margin_type varchar(1),
+        in v_total_source_quantity int,
+        in v_total_source_amount decimal(15,3)	)
+BEGIN
+DECLARE v_source_id int default 0;
+declare v_source_field1  varchar(255) default ' ';
+declare v_source_field2  varchar(255) default ' ';
+declare v_source_field3  varchar(255) default ' ';
+DECLARE v_source_quantity int default 0;
+DECLARE v_source_amount   decimal(15,3) default 0;
+declare v_allocated_source_quantity int default 0;
+
+	declare source_cursor cursor for
+		select id, field1, field2, field3,
+			quantity , amount
+		from col.source_data
+		where field1 = field1
+          and field2 = field2
+          and field3 = field3
+          order by field1, field2, field3;
+
+	set v_allocated_source_quantity = v_total_source_quantity;
+
+	open source_cursor;
+
+    source_loop: loop
+		fetch source_cursor
+			into v_source_id, v_source_field1, v_source_field2, v_source_field3,
+				v_source_quantity, v_source_amount;
+
+		if (v_source_quantity <= v_allocated_source_quantity) then
+			call `alloc_avail_collateral`(
+				field1,				field2,
+				field3,				margin_type,
+				v_source_id,
+				v_source_quantity,	v_source_amount );
+			set v_allocated_source_quantity =- v_source_quantity;
+
+            if v_allocated_source_quantity < 0 then
+				set v_allocated_source_quantity = 0;
+			end if;
+		end if;
+
+	end loop;
+END

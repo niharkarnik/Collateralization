@@ -1,0 +1,29 @@
+<h1>Listing all Allocated Sources</h1>
+
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Date</th>
+    <th>Sequence</th>
+    <th>Source Id</th>
+    <th>Source Quantity</th>
+    <th>Collateral Id</th>
+    <th>Collateral Quantity</th>
+    <th>Timestamp</th>
+  </tr>
+
+  <% @allocsources.each do |allocsource| %>
+    <tr>
+      <td><%= allocsource.id %></td>
+      <td><%= allocsource.allocationdate %></td>
+      <td><%= allocsource.allocationrunseq %></td>
+      <td><%= allocsource.source_id %></td>
+      <td><%= allocsource.sourceallocquantity %></td>
+      <td><%= allocsource.collateral_id %></td>
+      <td><%= allocsource.collateralallocquantity %></td>
+      <td><%= allocsource.created_at %></td>
+
+      <td><%= link_to 'Show', allocsource_path(allocsource) %></td>
+    </tr>
+  <% end %>
+</table>

@@ -1,0 +1,2 @@
+class Vunderallocatedsource < ApplicationRecord
+end

@@ -1,0 +1,36 @@
+<h1>Listing all Sources</h1>
+
+<%= link_to 'New Source', new_source_path %>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>field1</th>
+    <th>field2</th>
+    <th>field3</th>
+    <th>field4</th>
+    <th>field5</th>
+    <th>quantity</th>
+    <th>amount</th>
+    <th>comparefield</th>
+  </tr>
+
+  <% @sources.each do |source| %>
+    <tr>
+      <td><%= source.id %></td>
+      <td><%= source.field1 %></td>
+      <td><%= source.field2 %></td>
+      <td><%= source.field3 %></td>
+      <td><%= source.field4 %></td>
+      <td><%= source.field5 %></td>
+      <td><%= source.quantity %></td>
+      <td><%= source.amount %></td>
+      <td><%= source.comparefield %></td>
+
+      <td><%= link_to 'Show', source_path(source) %></td>
+      <td><%= link_to 'Edit', edit_source_path(source) %></td>
+      <td><%= link_to 'Destroy',source_path(source),
+              method: :delete,
+              data: { confirm: 'Are you sure?'} %> </td>
+    </tr>
+  <% end %>
+</table>

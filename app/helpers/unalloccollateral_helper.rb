@@ -1,0 +1,2 @@
+module UnalloccollateralHelper
+end
